@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        "use strict";
+        // Criar o jogo pedra papel tesoura
+        // Criar PVE
+        // Computador jogar com Math.random()
+        // Jogador escolhe pelo prompt
+        // Botão para jogar e jogar novamente
+        // Cada partida será de melhor de 5.
+
+        // Se resultado 1 = Pedra, se 2 = Papel ou se 3 = Tesoura
+        const cpuChoice = () => Math.floor(Math.random() * 3 + 1)
+
+        const playerChoice = (choice = prompt("Digite Pedra, Papel ou Tesoura")) => {
+            return choice.match(/pedra/gi) ? 1 :
+                choice.match(/papel/gi) ? 2 :
+                    choice.match(/tesoura/gi) ? 3 : false
+        }
+        const play = () => {
+            let cChoice = cpuChoice()
+            let pChoice = playerChoice()
+            let result = ''
+
+            // validação de resposta
+            if (!pChoice) {
+                alert("Escolha Inválida!")
+                return "Escolha Inválida!"
+            }
+            // definindo resultado
+            result = (pChoice == cChoice) ? "Empate" :
+                (pChoice == 2 && cChoice == 1) || (pChoice == 3 && cChoice == 2) || (pChoice == 1 && cChoice == 3) ? "Jogador Ganhou!" : "Computador Ganhou!"
+            alert(`Jogador: ${pChoice == 1 ? "Pedra" : pChoice == 2 ? "Papel" : "Tesoura"} | Computador: ${cChoice == 1 ? "Pedra" : cChoice == 2 ? "Papel" : "Tesoura"} \n\n${result}`)
+
+            return result
+        }
+        const bestOfFive = () => {
+            let winner = 0
+            for (let i = 5; i--; i > 0) {
+                let partida = play()
+                if (partida == "Escolha Inválida!") {
+                    do { partida = play() } while (partida == "Escolha Inválida!")
+                } else {
+                    partida == "Jogador Ganhou!" ? winner++ : partida == "Computador Ganhou!" ? winner-- : "Empate"
+                }
+
+            }
+            return alert(winner == 0 ? "Empate" : winner > 0 ? "Jogador ganhou melhor de 5!" : "Computador ganhou melhor de 5!")
+        }
+
+    </script>
+    <h1>Pedra Papel Tesoura</h1>
+    <button onclick="play()">Jogar</button>
+    <button onclick="bestOfFive()">Jogar melhor de cinco!</button>
+</body>
+
+</html>
