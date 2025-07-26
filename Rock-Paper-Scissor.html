@@ -5,61 +5,119 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+        }
+
+        button {
+            margin-top: 10px;
+            border-radius: 5px;
+            font-size: 1.125rem;
+            padding: 5px 10px;
+        }
+
+        .md5 {
+            visibility: hidden;
+        }
+
+        .resultado {
+            margin-top: 30px;
+        }
+
+        li {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+    </style>
 </head>
 
 <body>
-    <script>
+    <div id="rps">
+        <h1>Bem-Vindo ao Pedra Papel Tesoura!</h1>
+        <button id="jogar">Jogar Melhor de 5</button>
+        <div class="md5">
+            <h2>Escolha sua jogada:</h2>
+            <button id="pedra" class="jogada">Pedra</button>
+            <button id="papel" class="jogada">Papel</button>
+            <button id="tesoura" class="jogada">Tesoura</button>
+            <h1>Melhor de 5!</h1>
+            <ol>
+            </ol>
+        </div>
+    </div>
+    <script defer>
         "use strict";
-        // Criar o jogo pedra papel tesoura
-        // Criar PVE
-        // Computador jogar com Math.random()
-        // Jogador escolhe pelo prompt
-        // Botão para jogar e jogar novamente
-        // Cada partida será de melhor de 5.
+        let winnerCount = []
+        let winner = 0
+        const divRps = document.querySelector("#rps")
+        const list = document.querySelector("ol")
+        const divMd5 = document.querySelector(".md5")
+        const btnJogar = document.querySelector("#jogar")
+        btnJogar.addEventListener("click", () => {
+            btnJogar.style.cssText = "visibility: hidden;"
+            divMd5.style.cssText = "visibility: visible;"
+            removeAllChildren(list)
+            divRps.removeChild(divRps.lastChild)
+        })
 
         // Se resultado 1 = Pedra, se 2 = Papel ou se 3 = Tesoura
         const cpuChoice = () => Math.floor(Math.random() * 3 + 1)
 
-        const playerChoice = (choice = prompt("Digite Pedra, Papel ou Tesoura")) => {
+
+
+        const playerChoice = (choice) => {
             return choice.match(/pedra/gi) ? 1 :
                 choice.match(/papel/gi) ? 2 :
                     choice.match(/tesoura/gi) ? 3 : false
         }
-        const play = () => {
+        const play = (selectedChoice) => {
             let cChoice = cpuChoice()
-            let pChoice = playerChoice()
-            let result = ''
+            let pChoice = playerChoice(selectedChoice)
+            let resultGame = ''
+            const listItem = document.createElement("li")
 
-            // validação de resposta
-            if (!pChoice) {
-                alert("Escolha Inválida!")
-                return "Escolha Inválida!"
-            }
             // definindo resultado
-            result = (pChoice == cChoice) ? "Empate" :
-                (pChoice == 2 && cChoice == 1) || (pChoice == 3 && cChoice == 2) || (pChoice == 1 && cChoice == 3) ? "Jogador Ganhou!" : "Computador Ganhou!"
-            alert(`Jogador: ${pChoice == 1 ? "Pedra" : pChoice == 2 ? "Papel" : "Tesoura"} | Computador: ${cChoice == 1 ? "Pedra" : cChoice == 2 ? "Papel" : "Tesoura"} \n\n${result}`)
+            resultGame = (pChoice == cChoice) ? "Empate" :
+                (pChoice == 2 && cChoice == 1) || (pChoice == 3 && cChoice == 2) || (pChoice == 1 && cChoice == 3) ? "Você Ganhou!" : "Computador Ganhou!"
+            //alert(`Jogador: ${pChoice == 1 ? "Pedra" : pChoice == 2 ? "Papel" : "Tesoura"} | Computador: ${cChoice == 1 ? "Pedra" : cChoice == 2 ? "Papel" : "Tesoura"} \n\n${resultGame}`)
 
-            return result
+            //resultado.textContent = resultGame
+            listItem.textContent = resultGame
+            list.appendChild(listItem)
+            return resultGame
         }
-        const bestOfFive = () => {
-            let winner = 0
-            for (let i = 5; i--; i > 0) {
-                let partida = play()
-                if (partida == "Escolha Inválida!") {
-                    do { partida = play() } while (partida == "Escolha Inválida!")
-                } else {
-                    partida == "Jogador Ganhou!" ? winner++ : partida == "Computador Ganhou!" ? winner-- : "Empate"
+
+        const removeAllChildren = (parent) => { while (parent.firstChild) { parent.removeChild(parent.firstChild) } }
+
+
+        const btnChoice = document.querySelectorAll(".jogada")
+        btnChoice.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                let partida = play(btn.id);
+                partida == "Você Ganhou!" ? winnerCount.push(1) : partida == "Computador Ganhou!" ? winnerCount.push(-1) : winnerCount.push(0);
+                if (winnerCount.length > 4) {
+                    let winnerResult = document.createElement("h1")
+
+                    winner = winnerCount.reduce((sum, current) => sum + current)
+                    winner > 0 ? winnerResult.textContent = "Você ganhou a partida!" :
+                    winner < 0 ? winnerResult.textContent = "Computador ganhou a partida!" : winnerResult.textContent = "Empate!"
+                    btnJogar.textContent = "Jogar Novamente"
+                    btnJogar.style.cssText = "visibility: visible;"
+                    winnerCount = []
+                    divRps.appendChild(winnerResult)
                 }
+            })
+        });
 
-            }
-            return alert(winner == 0 ? "Empate" : winner > 0 ? "Jogador ganhou melhor de 5!" : "Computador ganhou melhor de 5!")
-        }
+
+
+
+
 
     </script>
-    <h1>Pedra Papel Tesoura</h1>
-    <button onclick="play()">Jogar</button>
-    <button onclick="bestOfFive()">Jogar melhor de cinco!</button>
 </body>
 
 </html>
